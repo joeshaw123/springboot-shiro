@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.joeshaw.demo.shirodemo.mapper.base.PermissionBaseMapper">
+
+
+    <insert id="insertPermission"  useGeneratedKeys="true" keyProperty="pId">
+        INSERT INTO `permission`
+        (
+        <trim suffixOverrides=",">
+                    <if test="pId!=null">
+                        `p_id`,
+                    </if>
+                    <if test="pname!=null">
+                        `pname`,
+                    </if>
+                    <if test="url!=null">
+                        `url`,
+                    </if>
+        </trim>
+        )
+        VALUES
+        (
+        <trim suffixOverrides=",">
+                <if test="pId!=null">
+                    #{pId},
+                </if>
+                <if test="pname!=null">
+                    #{pname},
+                </if>
+                <if test="url!=null">
+                    #{url},
+                </if>
+        </trim>
+        )
+    </insert>
+
+
+
+
+    <update id="updatePermission">
+        UPDATE `permission`
+        SET
+        <trim suffixOverrides=",">
+            <if test="pname != null and pname!=''">
+                `pname` = #{pname},
+            </if>
+            <if test="url != null and url!=''">
+                `url` = #{url},
+            </if>
+        </trim>
+        WHERE
+        <trim suffixOverrides="and">
+                `p_id` = #{pId} and
+        </trim>
+    </update>
+
+    <update id="update">
+        UPDATE `permission`
+        SET
+        <trim suffixOverrides=",">
+        <if test="set.pname != null and set.pname!=''">
+            `pname` = #{set.pname},
+        </if>
+        <if test="set.url != null and set.url!=''">
+            `url` = #{set.url},
+        </if>
+        </trim>
+        <trim prefix="where" suffixOverrides="and | or">
+                <if test="where.pIdList != null">
+                    `p_id` in
+                    <foreach collection="where.pIdList" close=")" open="(" separator="," item="item">
+                        #{item}
+                    </foreach> and
+                </if>
+            <if test="where.pIdSt !=null">
+                `p_id` >= #{where.pIdSt} and
+            </if>
+            <if test="where.pIdEd!=null">
+                `p_id` &lt;= #{where.pIdEd} and
+            </if>
+                <if test="where.pnameList != null">
+                    `pname` in
+                    <foreach collection="where.pnameList" close=")" open="(" separator="," item="item">
+                        #{item}
+                    </foreach> and
+                </if>
+            <if test ="where.fuzzyPname!=null and where.fuzzyPname.size()>0">
+                (
+                <foreach collection="where.fuzzyPname"  separator="or" item="item">
+                    `Pname` like concat('%',#{item},'%')
+                </foreach>
+                ) and
+            </if>
+            <if test ="where.rightFuzzyPname!=null and where.rightFuzzyPname.size()>0">
+                (
+                <foreach collection="where.rightFuzzyPname"  separator="or" item="item">
+                    `Pname` like concat(#{item},'%')
+                </foreach>
+                ) and
+            </if>
+                <if test="where.urlList != null">
+                    `url` in
+                    <foreach collection="where.urlList" close=")" open="(" separator="," item="item">
+                        #{item}
+                    </foreach> and
+                </if>
+            <if test ="where.fuzzyUrl!=null and where.fuzzyUrl.size()>0">
+                (
+                <foreach collection="where.fuzzyUrl"  separator="or" item="item">
+                    `Url` like concat('%',#{item},'%')
+                </foreach>
+                ) and
+            </if>
+            <if test ="where.rightFuzzyUrl!=null and where.rightFuzzyUrl.size()>0">
+                (
+                <foreach collection="where.rightFuzzyUrl"  separator="or" item="item">
+                    `Url` like concat(#{item},'%')
+                </foreach>
+                ) and
+            </if>
+        </trim>
+    </update>
+
+
+    <resultMap type="com.joeshaw.demo.shirodemo.pojo.Permission" id="PermissionMap">
+        <result property="pId" column="p_id"/>
+        <result property="pname" column="pname"/>
+        <result property="url" column="url"/>
+    </resultMap>
+
+
+    <select id="queryPermission" resultMap="PermissionMap">
+        select
+        <include refid="baseResult"></include>
+        from  `permission`
+        <trim prefix="where" suffixOverrides="and | or">
+            <if test="pId != null">
+                `p_id` = #{pId} and
+            </if>
+            <if test="pname != null and pname!=''">
+                `pname` = #{pname} and
+            </if>
+            <if test="url != null and url!=''">
+                `url` = #{url} and
+            </if>
+            <if test = "(_parameter instanceof com.joeshaw.demo.shirodemo.pojo.Permission$QueryBuilder) == true">
+                <if test="pIdList != null">
+                    `p_id` in
+                    <foreach collection="pIdList" close=")" open="(" separator="," item="item">
+                        #{item}
+                    </foreach> and
+                </if>
+                <if test="pIdSt !=null">
+                    `p_id` >= #{pIdSt} and
+                </if>
+                <if test="pIdEd!=null">
+                    `p_id` &lt;= #{pIdEd} and
+                </if>
+                <if test="pnameList != null">
+                    `pname` in
+                    <foreach collection="pnameList" close=")" open="(" separator="," item="item">
+                        #{item}
+                    </foreach> and
+                </if>
+                <if test ="fuzzyPname!=null and fuzzyPname.size()>0">
+                    (
+                    <foreach collection="fuzzyPname"  separator="or" item="item">
+                        `Pname` like concat('%',#{item},'%')
+                    </foreach>
+                    ) and
+                </if>
+                <if test ="rightFuzzyPname!=null and rightFuzzyPname.size()>0">
+                    (
+                    <foreach collection="rightFuzzyPname"  separator="or" item="item">
+                        `Pname` like concat(#{item},'%')
+                    </foreach>
+                    ) and
+                </if>
+                <if test="urlList != null">
+                    `url` in
+                    <foreach collection="urlList" close=")" open="(" separator="," item="item">
+                        #{item}
+                    </foreach> and
+                </if>
+                <if test ="fuzzyUrl!=null and fuzzyUrl.size()>0">
+                    (
+                    <foreach collection="fuzzyUrl"  separator="or" item="item">
+                        `Url` like concat('%',#{item},'%')
+                    </foreach>
+                    ) and
+                </if>
+                <if test ="rightFuzzyUrl!=null and rightFuzzyUrl.size()>0">
+                    (
+                    <foreach collection="rightFuzzyUrl"  separator="or" item="item">
+                        `Url` like concat(#{item},'%')
+                    </foreach>
+                    ) and
+                </if>
+            </if>
+        </trim>
+    </select>
+
+    <select id="queryPermissionLimit1" resultMap="PermissionMap">
+        select
+        <include refid="baseResult"></include>
+        from  `permission`
+        <trim prefix="where" suffixOverrides="and | or">
+            <if test="pId != null">
+                `p_id` = #{pId} and
+            </if>
+            <if test="pname != null and pname!=''">
+                `pname` = #{pname} and
+            </if>
+            <if test="url != null and url!=''">
+                `url` = #{url} and
+            </if>
+            <if test = "(_parameter instanceof com.joeshaw.demo.shirodemo.pojo.Permission$QueryBuilder) == true">
+                    <if test="pIdList != null">
+                        `p_id` in
+                        <foreach collection="pIdList" close=")" open="(" separator="," item="item">
+                            #{item}
+                        </foreach> and
+                    </if>
+                <if test="pIdSt !=null">
+                    `p_id` >= #{pIdSt} and
+                </if>
+                <if test="pIdEd!=null">
+                    `p_id` &lt;= #{pIdEd} and
+                </if>
+                    <if test="pnameList != null">
+                        `pname` in
+                        <foreach collection="pnameList" close=")" open="(" separator="," item="item">
+                            #{item}
+                        </foreach> and
+                    </if>
+                <if test ="fuzzyPname!=null and fuzzyPname.size()>0">
+                    (
+                    <foreach collection="fuzzyPname"  separator="or" item="item">
+                        `Pname` like concat('%',#{item},'%')
+                    </foreach>
+                    ) and
+                </if>
+                <if test ="rightFuzzyPname!=null and rightFuzzyPname.size()>0">
+                    (
+                    <foreach collection="rightFuzzyPname"  separator="or" item="item">
+                        `Pname` like concat(#{item},'%')
+                    </foreach>
+                    ) and
+                </if>
+                    <if test="urlList != null">
+                        `url` in
+                        <foreach collection="urlList" close=")" open="(" separator="," item="item">
+                            #{item}
+                        </foreach> and
+                    </if>
+                <if test ="fuzzyUrl!=null and fuzzyUrl.size()>0">
+                    (
+                    <foreach collection="fuzzyUrl"  separator="or" item="item">
+                        `Url` like concat('%',#{item},'%')
+                    </foreach>
+                    ) and
+                </if>
+                <if test ="rightFuzzyUrl!=null and rightFuzzyUrl.size()>0">
+                    (
+                    <foreach collection="rightFuzzyUrl"  separator="or" item="item">
+                        `Url` like concat(#{item},'%')
+                    </foreach>
+                    ) and
+                </if>
+            </if>
+        </trim>
+        limit 1
+    </select>
+
+    <sql id="allResult">
+        <trim suffixOverrides=",">
+        `p_id`,
+        `pname`,
+        `url`,
+        </trim>
+    </sql>
+
+
+
+    <sql id="baseResult">
+        <trim suffixOverrides=",">
+            <if test = "(_parameter instanceof com.joeshaw.demo.shirodemo.pojo.Permission$QueryBuilder) == true">
+
+                <if test="fetchFields==null">
+                    <include refid="allResult"></include>
+                </if>
+                <if test="fetchFields!=null">
+                    <if test="fetchFields.AllFields !=null">
+                        <include refid="allResult"></include>
+                    </if>
+                    <if test="fetchFields.AllFields ==null and fetchFields.fetchFields==null and fetchFields.excludeFields==null and fetchFields.otherFields==null">
+                        <include refid="allResult"></include>
+                    </if>
+                    <if test="fetchFields.AllFields==null and fetchFields.fetchFields!=null">
+                    <if test="fetchFields.fetchFields.pId==true">
+                        `p_id`,
+                    </if>
+                    <if test="fetchFields.fetchFields.pname==true">
+                        `pname`,
+                    </if>
+                    <if test="fetchFields.fetchFields.url==true">
+                        `url`,
+                    </if>
+                    </if>
+                    <if test="fetchFields.AllFields==null and fetchFields.excludeFields!=null">
+                    <if test="fetchFields.excludeFields.pId==null">
+                        `p_id`,
+                    </if>
+                    <if test="fetchFields.excludeFields.pname==null">
+                        `pname`,
+                    </if>
+                    <if test="fetchFields.excludeFields.url==null">
+                        `url`,
+                    </if>
+                    </if>
+                    <if test="fetchFields.otherFields!=null and fetchFields.otherFields.size>0">
+                        <foreach collection="fetchFields.otherFields" index="index" item="item" separator=",">
+                        `#{item}`
+                        </foreach>
+                    </if>
+                </if>
+            </if>
+            <if test="(_parameter instanceof com.joeshaw.demo.shirodemo.pojo.Permission$QueryBuilder) == false" >
+                <include refid="allResult"></include>
+            </if>
+
+        </trim>
+    </sql>
+
+
+</mapper>

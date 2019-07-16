@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.joeshaw.demo.shirodemo.mapper.base.RoleBaseMapper">
+
+
+    <insert id="insertRole"  useGeneratedKeys="true" keyProperty="rId">
+        INSERT INTO `role`
+        (
+        <trim suffixOverrides=",">
+                    <if test="rId!=null">
+                        `r_id`,
+                    </if>
+                    <if test="rolename!=null">
+                        `rolename`,
+                    </if>
+        </trim>
+        )
+        VALUES
+        (
+        <trim suffixOverrides=",">
+                <if test="rId!=null">
+                    #{rId},
+                </if>
+                <if test="rolename!=null">
+                    #{rolename},
+                </if>
+        </trim>
+        )
+    </insert>
+
+
+
+
+    <update id="updateRole">
+        UPDATE `role`
+        SET
+        <trim suffixOverrides=",">
+            <if test="rolename != null and rolename!=''">
+                `rolename` = #{rolename},
+            </if>
+        </trim>
+        WHERE
+        <trim suffixOverrides="and">
+                `r_id` = #{rId} and
+        </trim>
+    </update>
+
+    <update id="update">
+        UPDATE `role`
+        SET
+        <trim suffixOverrides=",">
+        <if test="set.rolename != null and set.rolename!=''">
+            `rolename` = #{set.rolename},
+        </if>
+        </trim>
+        <trim prefix="where" suffixOverrides="and | or">
+                <if test="where.rIdList != null">
+                    `r_id` in
+                    <foreach collection="where.rIdList" close=")" open="(" separator="," item="item">
+                        #{item}
+                    </foreach> and
+                </if>
+            <if test="where.rIdSt !=null">
+                `r_id` >= #{where.rIdSt} and
+            </if>
+            <if test="where.rIdEd!=null">
+                `r_id` &lt;= #{where.rIdEd} and
+            </if>
+                <if test="where.rolenameList != null">
+                    `rolename` in
+                    <foreach collection="where.rolenameList" close=")" open="(" separator="," item="item">
+                        #{item}
+                    </foreach> and
+                </if>
+            <if test ="where.fuzzyRolename!=null and where.fuzzyRolename.size()>0">
+                (
+                <foreach collection="where.fuzzyRolename"  separator="or" item="item">
+                    `Rolename` like concat('%',#{item},'%')
+                </foreach>
+                ) and
+            </if>
+            <if test ="where.rightFuzzyRolename!=null and where.rightFuzzyRolename.size()>0">
+                (
+                <foreach collection="where.rightFuzzyRolename"  separator="or" item="item">
+                    `Rolename` like concat(#{item},'%')
+                </foreach>
+                ) and
+            </if>
+        </trim>
+    </update>
+
+
+    <resultMap type="com.joeshaw.demo.shirodemo.pojo.Role" id="RoleMap">
+        <result property="rId" column="r_id"/>
+        <result property="rolename" column="rolename"/>
+    </resultMap>
+
+
+    <select id="queryRole" resultMap="RoleMap">
+        select
+        <include refid="baseResult"></include>
+        from  `role`
+        <trim prefix="where" suffixOverrides="and | or">
+            <if test="rId != null">
+                `r_id` = #{rId} and
+            </if>
+            <if test="rolename != null and rolename!=''">
+                `rolename` = #{rolename} and
+            </if>
+            <if test = "(_parameter instanceof com.joeshaw.demo.shirodemo.pojo.Role$QueryBuilder) == true">
+                <if test="rIdList != null">
+                    `r_id` in
+                    <foreach collection="rIdList" close=")" open="(" separator="," item="item">
+                        #{item}
+                    </foreach> and
+                </if>
+                <if test="rIdSt !=null">
+                    `r_id` >= #{rIdSt} and
+                </if>
+                <if test="rIdEd!=null">
+                    `r_id` &lt;= #{rIdEd} and
+                </if>
+                <if test="rolenameList != null">
+                    `rolename` in
+                    <foreach collection="rolenameList" close=")" open="(" separator="," item="item">
+                        #{item}
+                    </foreach> and
+                </if>
+                <if test ="fuzzyRolename!=null and fuzzyRolename.size()>0">
+                    (
+                    <foreach collection="fuzzyRolename"  separator="or" item="item">
+                        `Rolename` like concat('%',#{item},'%')
+                    </foreach>
+                    ) and
+                </if>
+                <if test ="rightFuzzyRolename!=null and rightFuzzyRolename.size()>0">
+                    (
+                    <foreach collection="rightFuzzyRolename"  separator="or" item="item">
+                        `Rolename` like concat(#{item},'%')
+                    </foreach>
+                    ) and
+                </if>
+            </if>
+        </trim>
+    </select>
+
+    <select id="queryRoleLimit1" resultMap="RoleMap">
+        select
+        <include refid="baseResult"></include>
+        from  `role`
+        <trim prefix="where" suffixOverrides="and | or">
+            <if test="rId != null">
+                `r_id` = #{rId} and
+            </if>
+            <if test="rolename != null and rolename!=''">
+                `rolename` = #{rolename} and
+            </if>
+            <if test = "(_parameter instanceof com.joeshaw.demo.shirodemo.pojo.Role$QueryBuilder) == true">
+                    <if test="rIdList != null">
+                        `r_id` in
+                        <foreach collection="rIdList" close=")" open="(" separator="," item="item">
+                            #{item}
+                        </foreach> and
+                    </if>
+                <if test="rIdSt !=null">
+                    `r_id` >= #{rIdSt} and
+                </if>
+                <if test="rIdEd!=null">
+                    `r_id` &lt;= #{rIdEd} and
+                </if>
+                    <if test="rolenameList != null">
+                        `rolename` in
+                        <foreach collection="rolenameList" close=")" open="(" separator="," item="item">
+                            #{item}
+                        </foreach> and
+                    </if>
+                <if test ="fuzzyRolename!=null and fuzzyRolename.size()>0">
+                    (
+                    <foreach collection="fuzzyRolename"  separator="or" item="item">
+                        `Rolename` like concat('%',#{item},'%')
+                    </foreach>
+                    ) and
+                </if>
+                <if test ="rightFuzzyRolename!=null and rightFuzzyRolename.size()>0">
+                    (
+                    <foreach collection="rightFuzzyRolename"  separator="or" item="item">
+                        `Rolename` like concat(#{item},'%')
+                    </foreach>
+                    ) and
+                </if>
+            </if>
+        </trim>
+        limit 1
+    </select>
+
+    <sql id="allResult">
+        <trim suffixOverrides=",">
+        `r_id`,
+        `rolename`,
+        </trim>
+    </sql>
+
+
+
+    <sql id="baseResult">
+        <trim suffixOverrides=",">
+            <if test = "(_parameter instanceof com.joeshaw.demo.shirodemo.pojo.Role$QueryBuilder) == true">
+
+                <if test="fetchFields==null">
+                    <include refid="allResult"></include>
+                </if>
+                <if test="fetchFields!=null">
+                    <if test="fetchFields.AllFields !=null">
+                        <include refid="allResult"></include>
+                    </if>
+                    <if test="fetchFields.AllFields ==null and fetchFields.fetchFields==null and fetchFields.excludeFields==null and fetchFields.otherFields==null">
+                        <include refid="allResult"></include>
+                    </if>
+                    <if test="fetchFields.AllFields==null and fetchFields.fetchFields!=null">
+                    <if test="fetchFields.fetchFields.rId==true">
+                        `r_id`,
+                    </if>
+                    <if test="fetchFields.fetchFields.rolename==true">
+                        `rolename`,
+                    </if>
+                    </if>
+                    <if test="fetchFields.AllFields==null and fetchFields.excludeFields!=null">
+                    <if test="fetchFields.excludeFields.rId==null">
+                        `r_id`,
+                    </if>
+                    <if test="fetchFields.excludeFields.rolename==null">
+                        `rolename`,
+                    </if>
+                    </if>
+                    <if test="fetchFields.otherFields!=null and fetchFields.otherFields.size>0">
+                        <foreach collection="fetchFields.otherFields" index="index" item="item" separator=",">
+                        `#{item}`
+                        </foreach>
+                    </if>
+                </if>
+            </if>
+            <if test="(_parameter instanceof com.joeshaw.demo.shirodemo.pojo.Role$QueryBuilder) == false" >
+                <include refid="allResult"></include>
+            </if>
+
+        </trim>
+    </sql>
+
+
+</mapper>

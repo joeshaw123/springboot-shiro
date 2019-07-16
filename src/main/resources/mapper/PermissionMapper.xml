@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.joeshaw.demo.shirodemo.mapper.PermissionMapper">
+    <resultMap type="com.joeshaw.demo.shirodemo.pojo.Permission" id="PermissionMap">
+        <result property="pId" column="p_id"/>
+        <result property="pname" column="pname"/>
+        <result property="url" column="url"/>
+    </resultMap>
+    <sql id="allResult">
+        <trim suffixOverrides=",">
+            `p_id`,
+            `pname`,
+            `url`,
+        </trim>
+    </sql>
+    <sql id="baseResult">
+        <trim suffixOverrides=",">
+            <if test = "(_parameter instanceof com.joeshaw.demo.shirodemo.pojo.Permission$QueryBuilder) == true">
+
+                <if test="fetchFields==null">
+                    <include refid="allResult"></include>
+                </if>
+                <if test="fetchFields!=null">
+                    <if test="fetchFields.AllFields !=null">
+                        <include refid="allResult"></include>
+                    </if>
+                    <if test="fetchFields.AllFields ==null and fetchFields.fetchFields==null and fetchFields.excludeFields==null and fetchFields.otherFields==null">
+                        <include refid="allResult"></include>
+                    </if>
+                    <if test="fetchFields.AllFields==null and fetchFields.fetchFields!=null">
+                        <if test="fetchFields.fetchFields.pId==true">
+                            `p_id`,
+                        </if>
+                        <if test="fetchFields.fetchFields.pname==true">
+                            `pname`,
+                        </if>
+                        <if test="fetchFields.fetchFields.url==true">
+                            `url`,
+                        </if>
+                    </if>
+                    <if test="fetchFields.AllFields==null and fetchFields.excludeFields!=null">
+                        <if test="fetchFields.excludeFields.pId==null">
+                            `p_id`,
+                        </if>
+                        <if test="fetchFields.excludeFields.pname==null">
+                            `pname`,
+                        </if>
+                        <if test="fetchFields.excludeFields.url==null">
+                            `url`,
+                        </if>
+                    </if>
+                    <if test="fetchFields.otherFields!=null and fetchFields.otherFields.size>0">
+                        <foreach collection="fetchFields.otherFields" index="index" item="item" separator=",">
+                            `#{item}`
+                        </foreach>
+                    </if>
+                </if>
+            </if>
+            <if test="(_parameter instanceof com.joeshaw.demo.shirodemo.pojo.Permission$QueryBuilder) == false" >
+                <include refid="allResult"></include>
+            </if>
+
+        </trim>
+    </sql>
+
+    <select id="queryPermissionByRoleId" parameterType="int" resultMap="PermissionMap">
+        SELECT
+        p.p_id,p.pname,p.url
+        FROM
+            role r,permission p,role_permission rp
+        where r.r_id = rp.r_id and p.p_id = rp.p_id and r.r_id = #{roleId}
+    </select>
+
+</mapper>
